@@ -2,6 +2,8 @@ import React, { useEffect, useState } from "react";
 import PropTypes from "prop-types";
 import { createPopper } from "@popperjs/core";
 
+  import { ToastContainer, toast } from 'react-toastify';
+
 import {
   addUser,
   deleteUserById,
@@ -9,8 +11,10 @@ import {
   getAllUsers,
   getUserBetweenXAndY,
   searchUsersByName,
+  addUserWithImage,
 } from "../../service/apiuser";
 
+import {useHistory} from 'react-router-dom'
 // components
 
 export default function CardTableListOfUsers({ color }) {
@@ -26,6 +30,8 @@ export default function CardTableListOfUsers({ color }) {
   });
   const [minAge, setMinAge] = useState();
   const [maxAge, setMaxAge] = useState();
+
+  const history = useHistory()
 
   const [popoverShow, setPopoverShow] = React.useState(false);
   const btnRef = React.createRef();
@@ -115,11 +121,14 @@ export default function CardTableListOfUsers({ color }) {
     searchUsers();
   }, [name]);
 
+  
+
   const deleteUser = async (id) => {
     try {
       await deleteUserById(id)
         .then((response) => {
           getUsers();
+          toast("Wow so easy!");
           console.log("user deleted");
         })
         .catch((error) => {
@@ -157,6 +166,41 @@ export default function CardTableListOfUsers({ color }) {
     }
   };
 
+  //const image = "";
+  const [image, setImage] = useState();
+
+  const formData = new FormData();
+
+  const handlechangeImg = (e) => {
+    setImage(e.target.files[0]);
+    console.log(image);
+  }
+
+  const addNewUserWithImg = async () => {
+    try {
+      formData.append("firstName", newUser.firstName);
+      formData.append("lastName", newUser.lastName);
+      formData.append("age", newUser.age);
+      formData.append("email", newUser.email);
+      formData.append("password", newUser.password);
+      formData.append("user_image", image, `${image.name}`);
+      console.log(image);
+      console.log(newUser);
+      await addUserWithImage(formData)
+        .then((response) => {
+          getUsers();
+          console.log("user added");
+        })
+        .catch((error) => {
+          console.log("Error while calling addUser API ", error);
+        });
+    } catch (error) {
+      console.log("Error while calling getUsers API ", error);
+    }
+  };
+
+
+
   return (
     <>
       <div
@@ -165,6 +209,8 @@ export default function CardTableListOfUsers({ color }) {
           (color === "light" ? "bg-white" : "bg-lightBlue-900 text-white")
         }
       >
+                <ToastContainer />
+
         <div className="rounded-t mb-0 px-4 py-3 border-0">
           <div className="flex flex-wrap items-center">
             <div className="relative w-full px-4 max-w-full flex-grow flex-1">
@@ -251,7 +297,6 @@ export default function CardTableListOfUsers({ color }) {
                             placeholder="First Name"
                             name="firstName"
                             value={newUser.firstName}
-
                             class="px-2 py-1 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow outline-none focus:outline-none focus:shadow-outline w-6/12"
                             onChange={handlechange}
                           />
@@ -261,8 +306,7 @@ export default function CardTableListOfUsers({ color }) {
                             name="lastName"
                             class="px-2 ml-2 py-1 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow outline-none focus:outline-none focus:shadow-outline w-6/12"
                             onChange={handlechange}
-                                                        value={newUser.lastName}
-
+                            value={newUser.lastName}
                           />
                           <input
                             type="text"
@@ -270,8 +314,7 @@ export default function CardTableListOfUsers({ color }) {
                             name="age"
                             class="px-2 py-1 ml-2 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow outline-none focus:outline-none focus:shadow-outline w-6/12"
                             onChange={handlechange}
-                                                        value={newUser.age}
-
+                            value={newUser.age}
                           />
                         </div>
                         <div class="flex gap-4 mb-3">
@@ -281,8 +324,7 @@ export default function CardTableListOfUsers({ color }) {
                             name="email"
                             class="px-2 py-1 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow outline-none focus:outline-none focus:shadow-outline w-6/12"
                             onChange={handlechange}
-                                                        value={newUser.email}
-
+                            value={newUser.email}
                           />
                           <input
                             type="password"
@@ -290,10 +332,15 @@ export default function CardTableListOfUsers({ color }) {
                             name="password"
                             class="px-2 ml-2 py-1 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow outline-none focus:outline-none focus:shadow-outline w-6/12"
                             onChange={handlechange}
-                                                        value={newUser.password }
-
+                            value={newUser.password}
                           />
                         </div>
+                        <input
+                          type="file"
+                          name="user_image"
+                          class="px-2 py-1 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow outline-none focus:outline-none focus:shadow-outline w-6/12"
+                          onChange={handlechangeImg}
+                        />
                         <button
                           className="bg-lightBlue-500 ml-2 text-white active:bg-lightBlue-600 font-bold uppercase text-xs px-4 py-1 rounded shadow hover:shadow-md outline-none focus:outline-none mr-1 mb-1 ease-linear transition-all duration-150"
                           type="button"
@@ -307,7 +354,7 @@ export default function CardTableListOfUsers({ color }) {
                         <button
                           className="bg-lightBlue-500 ml-2 text-white active:bg-lightBlue-600 font-bold uppercase text-xs px-4 py-1 rounded shadow hover:shadow-md outline-none focus:outline-none mr-1 mb-1 ease-linear transition-all duration-150"
                           type="button"
-                          onClick={() => getUserBetweenAges(minAge, maxAge)}
+                          onClick={() => addNewUserWithImg()}
                         >
                           Add User with Image
                         </button>
@@ -422,6 +469,10 @@ export default function CardTableListOfUsers({ color }) {
                     <button
                       className="bg-lightBlue-500 text-white active:bg-lightBlue-600 font-bold uppercase text-xs px-4 py-2 rounded shadow hover:shadow-md outline-none focus:outline-none ease-linear transition-all duration-150"
                       type="button"
+                      onClick={()=> history.push({ 
+                        pathname : "/admin/UpdateUser",
+                        state : {user : user}
+                      })}
                     >
                       Update
                     </button>{" "}
