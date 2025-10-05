@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState , useCallback } from "react";
 import PropTypes from "prop-types";
 import { createPopper } from "@popperjs/core";
 
@@ -60,20 +60,16 @@ export default function CardTableListOfUsers({ color }) {
     }
   };
 
-  const searchUsers = async () => {
+ // ✅ Encapsuler la fonction dans useCallback
+  const searchUsers = useCallback(async () => {
     try {
-      await searchUsersByName(name)
-        .then((response) => {
-          setUsers(response.data.userList);
-          console.log("users", response.data.userList);
-        })
-        .catch((error) => {
-          console.log("Error while calling getUsers API ", error);
-        });
+      const response = await searchUsersByName(name);
+      setUsers(response.data.userList);
+      console.log("users", response.data.userList);
     } catch (error) {
       console.log("Error while calling getUsers API ", error);
     }
-  };
+  }, [name]); // ← dépendances : la fonction ne change que si `name` change
 
   const getOrderUsers = async () => {
     try {
@@ -116,9 +112,11 @@ export default function CardTableListOfUsers({ color }) {
     return () => clearInterval(interval); // nettoyage quand le composant est démonté
   }, []);
 
-  useEffect(() => {
-    searchUsers();
-  }, [name]);
+useEffect(() => {
+  searchUsers();
+}, [searchUsers, name]);
+
+
 
   
 

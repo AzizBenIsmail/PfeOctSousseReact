@@ -16,10 +16,8 @@ import Settings from "views/admin/Settings.js";
 import UpdateUser from "views/admin/UpdateUser";
 import Tables from "views/admin/Tables.js";
 
-import { useHistory } from "react-router-dom";
 
 export default function Admin() {
-  const history = useHistory();
 
   const token = localStorage.getItem("token");
   if (token) {
