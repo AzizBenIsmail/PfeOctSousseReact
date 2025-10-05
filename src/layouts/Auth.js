@@ -12,7 +12,21 @@ import Login from "views/auth/Login.js";
 import forget from "views/auth/forget";
 import Register from "views/auth/Register.js";
 
+import { useHistory } from "react-router-dom";
+
 export default function Auth() {
+
+  const history = useHistory();
+
+    const token = localStorage.getItem("token");
+ if (token) {
+    if (localStorage.getItem("role") === "admin") {
+      history.push("/admin");
+    } else {
+      history.push("/landing");
+    }
+  }
+
   return (
     <>
       <Navbar transparent />

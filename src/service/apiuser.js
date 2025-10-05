@@ -36,3 +36,9 @@ export async function addUserWithImage(userData) {
 export async function updateUser(id, updatedData) {
   return await axios.put(`${apiUrl}/updateUser/${id}`, updatedData);
 }
+
+export async function login(userData) {
+  return await axios.post(`${apiUrl}/login`, userData,
+    {withCredentials: true}
+  );
+}

@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import PropTypes from "prop-types";
 import { createPopper } from "@popperjs/core";
 
-  import { ToastContainer, toast } from 'react-toastify';
 
 import {
   addUser,
@@ -128,7 +127,7 @@ export default function CardTableListOfUsers({ color }) {
       await deleteUserById(id)
         .then((response) => {
           getUsers();
-          toast("Wow so easy!");
+          alert("Bienvenue sur mon site !");
           console.log("user deleted");
         })
         .catch((error) => {
@@ -209,8 +208,6 @@ export default function CardTableListOfUsers({ color }) {
           (color === "light" ? "bg-white" : "bg-lightBlue-900 text-white")
         }
       >
-                <ToastContainer />
-
         <div className="rounded-t mb-0 px-4 py-3 border-0">
           <div className="flex flex-wrap items-center">
             <div className="relative w-full px-4 max-w-full flex-grow flex-1">

@@ -1,7 +1,42 @@
-import React from "react";
+import React , {useState} from "react";
 import { Link } from "react-router-dom";
 
+import { addUser } from "service/apiuser";
+
+import { useHistory } from "react-router-dom";
+
 export default function Register() {
+
+  const [user, setUser] = useState({
+    firstName: "",
+    email: "",
+    password: ""
+  });
+
+  const history = useHistory();
+
+  const handleChange = (e) => {
+    setUser({ ...user, [e.target.name]: e.target.value });
+    console.log(user);
+  };
+
+  const handleSubmit = async (e) => {
+    try {
+      await addUser(user)
+        .then((response) => {
+          history.push("/auth/login");
+          alert("Bienvenue sur mon site !");
+          console.log("user added");
+        })
+        .catch((error) => {
+          console.log("Error while calling addUser API ", error);
+        });
+
+    } catch (error) {
+      console.log("Error while calling addUser API ", error);
+    }
+  }
+
   return (
     <>
       <div className="container mx-auto px-4 h-full">
@@ -53,9 +88,11 @@ export default function Register() {
                       Name
                     </label>
                     <input
-                      type="email"
+                      type="text"
                       className="border-0 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
                       placeholder="Name"
+                      name="firstName"
+                      onChange={(e) => handleChange(e)}
                     />
                   </div>
 
@@ -70,6 +107,8 @@ export default function Register() {
                       type="email"
                       className="border-0 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
                       placeholder="Email"
+                      name="email"
+                      onChange={(e) => handleChange(e)}
                     />
                   </div>
 
@@ -84,6 +123,8 @@ export default function Register() {
                       type="password"
                       className="border-0 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
                       placeholder="Password"
+                      name="password"
+                      onChange={(e) => handleChange(e)}
                     />
                   </div>
 
@@ -111,6 +152,7 @@ export default function Register() {
                     <button
                       className="bg-blueGray-800 text-white active:bg-blueGray-600 text-sm font-bold uppercase px-6 py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none mr-1 mb-1 w-full ease-linear transition-all duration-150"
                       type="button"
+                      onClick={(e) => handleSubmit(e)}
                     >
                       Create Account
                     </button>

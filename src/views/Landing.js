@@ -6,7 +6,20 @@ import { Link } from "react-router-dom";
 import Navbar from "components/Navbars/AuthNavbar.js";
 import Footer from "components/Footers/Footer.js";
 
+import { useHistory } from "react-router-dom";
+
 export default function Landing() {
+  const history = useHistory();
+
+  const token = localStorage.getItem("token");
+  if (token) {
+    if (localStorage.getItem("role") === "admin") {
+      history.push("/admin");
+    }
+  } else {
+    history.push("/auth/login");
+  }
+
   return (
     <>
       <Navbar transparent />
